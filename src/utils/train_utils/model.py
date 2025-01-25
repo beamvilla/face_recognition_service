@@ -1,3 +1,5 @@
+from typing import Optional
+
 import torch
 import torch.nn as nn
 import torchvision.models as models
@@ -15,12 +17,17 @@ def get_fc_layers(fc_sizes, ps):
 
 
 class Resnet34FeatureExtractor(nn.Module):
-    def __init__(self, n_chanel: int = 3, feat_dim: int = 128, pretrained: bool = True):
+    def __init__(
+        self, 
+        n_chanel: int = 3, 
+        feat_dim: int = 128, 
+        weights: Optional[models.ResNet34_Weights] = None
+    ):
         super().__init__()
         assert n_chanel in [1, 3]  # Validate input channel
 
         self.feat_dim = feat_dim
-        resnet34 = models.resnet34(pretrained=pretrained)
+        resnet34 = models.resnet34(weights=weights)
         # Change input channel according to the input data
         resnet34.conv1 = nn.Conv2d(n_chanel, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
         self.body = nn.Sequential(*nn.ModuleList(resnet34.children())[:-1])

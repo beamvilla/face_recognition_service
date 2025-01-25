@@ -13,8 +13,6 @@ from utils import (
 from config.train_config import TrainConfig
 
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
 def train(
     train_dir: str,
     test_dir: str,
@@ -38,7 +36,7 @@ def train(
 
     triplet_image_loader = TripletImageLoader(image_tensors_train, image_tensors_test)
     model = TripletNet(
-        feature_extractor_module=Resnet34FeatureExtractor(n_chanel=3, feat_dim=128, pretrained=False),
+        feature_extractor_module=Resnet34FeatureExtractor(n_chanel=3, feat_dim=128, weights=None),
         device=device
     )
     loss_func = TripletLoss(loss_alpha)
@@ -68,6 +66,9 @@ def train(
 if __name__ == "__main__":
     train_config = TrainConfig("./config/train.yaml")
 
+    device = torch.device(train_config.DEVICE)
+    print(f"Model training on {device}")
+    
     n_train_faces = len(os.listdir(train_config.TRAIN_DIR))
     n_val_faces = len(os.listdir(train_config.TEST_DIR))
 

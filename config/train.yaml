@@ -4,3 +4,4 @@ TEST_DIR: ./dataset/face/test
 MODEL_DIR: ./models
 LOSS_ALPHA: 0.8
 LEARNING_RATE: 2e-5
+DEVICE: cpu

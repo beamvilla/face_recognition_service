@@ -10,3 +10,4 @@ class TrainConfig:
         self.MODEL_DIR: str = config_file["MODEL_DIR"]
         self.LOSS_ALPHA: float = config_file["LOSS_ALPHA"]
         self.LEARNING_RATE: float = float(config_file["LEARNING_RATE"])
+        self.DEVICE: str = config_file["DEVICE"]
