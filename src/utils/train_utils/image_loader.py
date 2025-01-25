@@ -1,6 +1,8 @@
 import numpy as np
 import torch
-from typing import List
+from typing import List, Tuple
+
+from utils.train_utils.model import TripletNet
 
 
 class TripletImageLoader:
@@ -34,3 +36,30 @@ class TripletImageLoader:
             triplets[2][i] = self.image_tensors_train[face_neg_idx, neg_idx]
 
         return triplets
+
+    def make_oneshot_task(self, n_test_samples: int) -> Tuple[List[torch.Tensor], torch.Tensor]:
+        random_face_indexs = np.random.choice(self.n_val, size=(n_test_samples,), replace=False)
+        indices = np.random.randint(0, self.n_samples, size=(n_test_samples,))
+        true_face = random_face_indexs[0]
+
+        ex1, ex2 = np.random.choice(self.n_samples, replace=False, size=(2,))
+        test_image = torch.stack([self.image_tensors_val[true_face, ex1]] * n_test_samples)
+        support_set = self.image_tensors_val[random_face_indexs, indices]
+        support_set[0] = self.image_tensors_val[true_face, ex2]
+        pairs = [test_image, support_set]
+
+        targets = torch.zeros((n_test_samples,))
+        targets[0] = 1
+        return pairs, targets
+    
+    def test_oneshot(self, model: TripletNet, n_test_samples: int, k: int) -> float:
+        model.eval()
+        n_correct = 0
+        for _ in range(k):
+            inputs, _ = self.make_oneshot_task(n_test_samples)
+            dists = model.get_distance(*inputs).cpu().detach().numpy()
+            if np.argmin(dists) == 0:
+                n_correct += 1
+        pct_correct = (100 * n_correct / k)
+        
+        return pct_correct
