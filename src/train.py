@@ -1,5 +1,8 @@
 import os
 import torch
+import torch.optim as optim
+from tqdm import tqdm
+
 from utils import (
     transform_images, 
     TripletImageLoader, 
@@ -7,8 +10,7 @@ from utils import (
     Resnet34FeatureExtractor,
     TripletLoss
 )
-import torch.optim as optim
-from tqdm import tqdm
+from config.train_config import TrainConfig
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -63,23 +65,22 @@ def train(
             print("iteration {}, training loss: {:.2f},".format(i, loss.item()))
  
 
-train_dir = "./dataset/face/train"
-test_dir = "./dataset/face/test"
+if __name__ == "__main__":
+    train_config = TrainConfig("./config/train.yaml")
 
-n_val_faces = len(os.listdir(test_dir))
-n_train_faces = len(os.listdir(train_dir))
-epochs = 10
+    n_train_faces = len(os.listdir(train_config.TRAIN_DIR))
+    n_val_faces = len(os.listdir(train_config.TEST_DIR))
 
-train(
-    train_dir=train_dir,
-    test_dir=test_dir,
-    model_dir="./models/",
-    n_test_samples=n_val_faces,
-    n_val=n_val_faces,
-    epochs=epochs,
-    batch_size=n_train_faces, 
-    eval_every=epochs // 2, 
-    loss_every=epochs // 2,
-    loss_alpha=0.8,
-    learning_rate=2e-5
-)
+    train(
+        train_dir=train_config.TRAIN_DIR,
+        test_dir=train_config.TEST_DIR,
+        model_dir=train_config.MODEL_DIR,
+        n_test_samples=n_val_faces,
+        n_val=n_val_faces,
+        epochs=train_config.EPOCHS,
+        batch_size=n_train_faces, 
+        eval_every=train_config.EPOCHS // 2, 
+        loss_every=train_config.EPOCHS // 2,
+        loss_alpha=train_config.LOSS_ALPHA,
+        learning_rate=train_config.LEARNING_RATE
+    )
