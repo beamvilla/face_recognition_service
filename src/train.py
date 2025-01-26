@@ -8,7 +8,8 @@ from utils import (
     TripletImageLoader, 
     TripletNet, 
     Resnet34FeatureExtractor,
-    TripletLoss
+    TripletLoss,
+    get_logger
 )
 from config.train_config import TrainConfig
 
@@ -53,22 +54,22 @@ def train(
         # evaluate
         if (i % eval_every == 0) and (i != 0):
             val_acc = triplet_image_loader.test_oneshot(model, n_test_samples, n_val)
-            print(f"validation accuracy on {n_test_samples} supports of total {n_val} set:{val_acc}")
+            get_logger().info(f"validation accuracy on {n_test_samples} supports of total {n_val} set:{val_acc}")
             if val_acc >= best_acc:
-                print("saving")
+                get_logger().info("saving")
                 torch.save(model.state_dict(), model_path)
                 best_acc = val_acc
 
         if i % loss_every == 0:
-            print("iteration {}, training loss: {:.2f},".format(i, loss.item()))
+            get_logger().info("iteration {}, training loss: {:.2f},".format(i, loss.item()))
  
 
 if __name__ == "__main__":
     train_config = TrainConfig("./config/train.yaml")
 
     device = torch.device(train_config.DEVICE)
-    print(f"Model training on {device}")
-    
+    get_logger().info(f"Model training on {device}")
+   
     n_train_faces = len(os.listdir(train_config.TRAIN_DIR))
     n_val_faces = len(os.listdir(train_config.TEST_DIR))
 
