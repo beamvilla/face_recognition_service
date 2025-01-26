@@ -1,7 +1,8 @@
 from typing import Tuple, List
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+
+from models.get_distance import get_features_distance
 
 
 class TripletNet(nn.Module):
@@ -13,7 +14,7 @@ class TripletNet(nn.Module):
     def get_distance(self, img1: torch.Tensor, img2: torch.Tensor) -> torch.Tensor:
         img1, img2 = img1.to(self.device), img2.to(self.device)
         img1_feat, img2_feat = self.feature_extractor(img1), self.feature_extractor(img2)
-        return F.pairwise_distance(img1_feat, img2_feat, p=2.0, keepdim=True)
+        return get_features_distance(img1_feat, img2_feat)
 
     def forward(self, input: List[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]:
         anchor, pos, neg = input
