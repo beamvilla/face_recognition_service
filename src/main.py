@@ -1,50 +1,20 @@
-import torch
+import io
 from PIL import Image
+from fastapi import FastAPI, File, UploadFile
 
-from models import (
-    TripletNet, 
-    Resnet34FeatureExtractor, 
-    transform_image, 
-    ImageMode,
-    get_features_distance
+from src.usecase import GetMatchFace
+from src.schema import APIResponseBody
+
+
+get_match_face_usecase = GetMatchFace()
+
+app = FastAPI()
+
+@app.post(
+    "/face_recognize", 
+    response_model=APIResponseBody
 )
-
-
-def get_image_feature(model: TripletNet, image: Image) -> torch.Tensor:
-    image_tensor = transform_image(
-        image=image,
-        transform_image_size=[224, 224],
-        image_mode=ImageMode.RGB.name
-    )
-
-    test_image = torch.stack([image_tensor[0, 0]])
-    image_feature = model.feature_extractor(test_image)
-    return image_feature
-
-
-device = torch.device("cpu")
-model = TripletNet(
-    feature_extractor_module=Resnet34FeatureExtractor(n_chanel=3, feat_dim=128, weights=None),
-    device=device
-)
-
-model.load_state_dict(torch.load("./models/model.pt"))
-
-model.eval()
-
-image = Image.open("./dataset/face/test/kanghanna/download.jpg")
-image_feature = get_image_feature(model=model, image=image)
-mockdb = torch.load("./data/mockdb.pth")
-
-min_distance = None
-min_distance_face_name = None
-
-for name, stored_face_features in mockdb.items():
-    for _feature in stored_face_features:
-        distance = get_features_distance(image_feature, _feature).item()
-        
-        if min_distance is None or distance < min_distance:
-            min_distance = distance
-            min_distance_face_name = name
-
-print(min_distance_face_name)
+async def recognize(image: UploadFile = File(...)):
+    face = Image.open(io.BytesIO(await image.read()))
+    match_face = get_match_face_usecase.predict(face)
+    return {"success": True, "match_face": match_face}

@@ -1,5 +1,3 @@
 *.pyc
-*.pt
-*.mar
 *.log
 **/logs

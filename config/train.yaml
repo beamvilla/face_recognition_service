@@ -1,4 +1,4 @@
-EPOCHS: 10
+EPOCHS: 20
 TRAIN_DIR: ./dataset/face/train
 TEST_DIR: ./dataset/face/test
 MODEL_DIR: ./models

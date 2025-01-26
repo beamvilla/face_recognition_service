@@ -1,6 +1,8 @@
 import torch
 import os
 from PIL import Image
+import sys
+sys.path.append("./")
 
 from models import (
     TripletNet, 
@@ -8,8 +10,6 @@ from models import (
     transform_image, 
     ImageMode
 )
-
-from utils import save_json
 
 
 def get_image_feature(model: TripletNet, image: Image) -> torch.Tensor:

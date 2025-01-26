@@ -2,7 +2,7 @@ from typing import Tuple, List
 import torch
 import torch.nn as nn
 
-from models.get_distance import get_features_distance
+from src.models.get_distance import get_features_distance
 
 
 class TripletNet(nn.Module):
