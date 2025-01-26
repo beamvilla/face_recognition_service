@@ -9,29 +9,30 @@ from src.models import (
     transform_image,
     get_features_distance
 )
+from src.config.config import AppConfig
 
 
 class GetMatchFace:
-    def __init__(self) -> None:
-        self.device = torch.device("cpu")
+    def __init__(self, config: AppConfig) -> None:
+        self.config = config
+        self.device = torch.device(self.config.DEVICE)
         self.model = TripletNet(
             feature_extractor_module=Resnet34FeatureExtractor(n_chanel=3, feat_dim=128, weights=None),
             device=self.device
         )
 
-        self.model.load_state_dict(torch.load("./models/model.pt"))
+        self.model.load_state_dict(torch.load(self.config.MODEL_PATH))
         self.model.eval()
 
-        self.mockdb = torch.load("./data/mockdb.pth")
+        self.mockdb = torch.load(self.config.MOCK_DB_PATH)
     
     def get_image_feature(
         self, 
         image: Image,
-        transform_image_size: List[int] = [224, 224]
     ) -> torch.Tensor:
         image_tensor = transform_image(
             image=image,
-            transform_image_size=transform_image_size,
+            transform_image_size=[self.config.INPUT_WIDTH, self.config.INPUT_HEIGHT],
             image_mode=ImageMode.RGB.name
         )
 

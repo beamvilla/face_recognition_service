@@ -4,9 +4,11 @@ from fastapi import FastAPI, File, UploadFile
 
 from src.usecase import GetMatchFace
 from src.schema import APIResponseBody
+from src.config.config import AppConfig
 
 
-get_match_face_usecase = GetMatchFace()
+app_config = AppConfig("./config/config.yaml")
+get_match_face_usecase = GetMatchFace(app_config)
 
 app = FastAPI()
 
