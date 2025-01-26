@@ -2,7 +2,7 @@ import numpy as np
 import torch
 from typing import List, Tuple
 
-from utils.train_utils.model import TripletNet
+from .model import TripletNet
 
 
 class TripletImageLoader:

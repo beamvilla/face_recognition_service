@@ -1,15 +1,16 @@
 import os
+from typing import List
 import torch
 import torch.optim as optim
 from tqdm import tqdm
 
-from utils import (
+from utils import get_logger
+from models import (
     transform_images_batch, 
     TripletImageLoader, 
     TripletNet, 
     Resnet34FeatureExtractor,
     TripletLoss,
-    get_logger
 )
 from config.train_config import TrainConfig
 
@@ -25,15 +26,22 @@ def train(
     eval_every: int = 20, 
     loss_every: int = 20,
     loss_alpha: int = 0.8,
-    learning_rate: float = 2e-5
+    learning_rate: float = 2e-5,
+    input_size: List[int] = [224, 224]
 ):
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
 
     model_path = os.path.join(model_dir, "model.pt")
 
-    image_tensors_train = transform_images_batch(dataset_path=train_dir)
-    image_tensors_test = transform_images_batch(dataset_path=test_dir)
+    image_tensors_train = transform_images_batch(
+        dataset_path=train_dir,
+        transform_image_size=input_size
+    )
+    image_tensors_test = transform_images_batch(
+        dataset_path=test_dir,
+        transform_image_size=input_size
+    )
 
     triplet_image_loader = TripletImageLoader(image_tensors_train, image_tensors_test)
     model = TripletNet(
@@ -84,5 +92,6 @@ if __name__ == "__main__":
         eval_every=train_config.EPOCHS // 2, 
         loss_every=train_config.EPOCHS // 2,
         loss_alpha=train_config.LOSS_ALPHA,
-        learning_rate=train_config.LEARNING_RATE
+        learning_rate=train_config.LEARNING_RATE,
+        input_size=[train_config.INPUT_WIDTH, train_config.INPUT_HEIGHT]
     )

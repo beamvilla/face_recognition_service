@@ -1,4 +1,4 @@
-from utils.file_utils import load_yaml_file
+from utils import load_yaml_file
 
 
 class TrainConfig:
@@ -11,3 +11,5 @@ class TrainConfig:
         self.LOSS_ALPHA: float = config_file["LOSS_ALPHA"]
         self.LEARNING_RATE: float = float(config_file["LEARNING_RATE"])
         self.DEVICE: str = config_file["DEVICE"]
+        self.INPUT_WIDTH: int = config_file["INPUT_WIDTH"]
+        self.INPUT_HEIGHT: int = config_file["INPUT_HEIGHT"]

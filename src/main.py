@@ -1,7 +1,7 @@
 import torch
 from PIL import Image
 
-from utils import (
+from models import (
     TripletNet, 
     Resnet34FeatureExtractor, 
     transform_image, 
