@@ -5,7 +5,8 @@ from models import (
     TripletNet, 
     Resnet34FeatureExtractor, 
     transform_image, 
-    ImageMode
+    ImageMode,
+    get_features_distance
 )
 
 
@@ -31,5 +32,19 @@ model.load_state_dict(torch.load("./models/model.pt"))
 
 model.eval()
 
-image = Image.open("./dataset/face/test/suzy/images.jpg")
+image = Image.open("./dataset/face/test/kanghanna/download.jpg")
 image_feature = get_image_feature(model=model, image=image)
+mockdb = torch.load("./data/mockdb.pth")
+
+min_distance = None
+min_distance_face_name = None
+
+for name, stored_face_features in mockdb.items():
+    for _feature in stored_face_features:
+        distance = get_features_distance(image_feature, _feature).item()
+        
+        if min_distance is None or distance < min_distance:
+            min_distance = distance
+            min_distance_face_name = name
+
+print(min_distance_face_name)
