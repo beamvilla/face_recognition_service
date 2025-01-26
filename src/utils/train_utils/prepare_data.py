@@ -31,7 +31,32 @@ def get_sample_per_person(dataset_path: str) -> int:
     return sample_per_person
 
 
-def transform_images(
+def transform_image(
+    image: Image,
+    transform_image_size: List[int] = [224, 224],
+    image_mode: str = ImageMode.RGB.name
+) -> torch.Tensor:
+    image_transform = transforms.Compose([
+        transforms.Resize(transform_image_size),
+        transforms.ToTensor(),
+    ])
+
+    n_image_chanel = 1
+    if image_mode == ImageMode.RGB.name:
+        n_image_chanel = 3
+
+    image_tensors = torch.empty(
+        1, 
+        1, 
+        n_image_chanel,
+        transform_image_size[0], 
+        transform_image_size[1]
+    )
+    image_tensors[0, 0] = image_transform(image)
+    return image_tensors
+
+
+def transform_images_batch(
     dataset_path: str,
     transform_image_size: List[int] = [224, 224],
     image_mode: str = ImageMode.RGB.name

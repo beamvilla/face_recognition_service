@@ -61,5 +61,4 @@ class TripletImageLoader:
             if np.argmin(dists) == 0:
                 n_correct += 1
         pct_correct = (100 * n_correct / k)
-        
         return pct_correct

@@ -4,7 +4,7 @@ import torch.optim as optim
 from tqdm import tqdm
 
 from utils import (
-    transform_images, 
+    transform_images_batch, 
     TripletImageLoader, 
     TripletNet, 
     Resnet34FeatureExtractor,
@@ -31,8 +31,8 @@ def train(
 
     model_path = os.path.join(model_dir, "model.pt")
 
-    image_tensors_train = transform_images(dataset_path=train_dir)
-    image_tensors_test = transform_images(dataset_path=test_dir)
+    image_tensors_train = transform_images_batch(dataset_path=train_dir)
+    image_tensors_test = transform_images_batch(dataset_path=test_dir)
 
     triplet_image_loader = TripletImageLoader(image_tensors_train, image_tensors_test)
     model = TripletNet(
