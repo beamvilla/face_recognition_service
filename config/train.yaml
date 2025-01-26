@@ -1,0 +1,9 @@
+EPOCHS: 20
+TRAIN_DIR: ./dataset/face/train
+TEST_DIR: ./dataset/face/test
+MODEL_DIR: ./models
+LOSS_ALPHA: 0.8
+LEARNING_RATE: 2e-5
+DEVICE: cpu
+INPUT_WIDTH: 224
+INPUT_HEIGHT: 224

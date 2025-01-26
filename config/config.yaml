@@ -1,0 +1,5 @@
+DEVICE: cpu
+INPUT_WIDTH: 224
+INPUT_HEIGHT: 224
+MODEL_PATH: ./models/model.pt
+MOCK_DB_PATH: ./data/mockdb.pth
